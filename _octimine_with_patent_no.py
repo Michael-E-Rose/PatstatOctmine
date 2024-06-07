@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def main():
     path = r'/home/pery@ip.local/f-newton/PATSTAT/2023-10/ep_ma5_all.ftr'
     octimine = pd.read_feather(path)
@@ -21,22 +22,21 @@ def main():
                                   right_on='docdb_family_id', suffixes=('', '_docdb2'))
 
     # Drop the additional docdb_family_id columns to avoid confusion
-    merged_df2 = merged_df2.drop(columns=['docdb_family_id', "docdb_family_id1", "docdb_family_id2", "docdb_family_id_docdb2"])
+    merged_df2 = merged_df2.drop(columns=['docdb_family_id', "docdb_family_id1",
+                                          "docdb_family_id2", "docdb_family_id_docdb2"])
 
     # Renaming columns for clarity
     merged_df2.rename(columns={
-        'earliest_pat_publn_id': 'earliest_pat_publn_id_docdb1',
-        'earliest_filing_year': 'earliest_filing_year_docdb1',
-        'earliest_pat_publn_id_docdb2': 'earliest_pat_publn_id_docdb2',
-        'earliest_filing_year_docdb2': 'earliest_filing_year_docdb2'
+        'earliest_pat_publn_id': 'patent_no1',
+        'earliest_filing_year_docdb1': 'earliest_filing_year',
+        'earliest_pat_publn_id_docdb2': 'patent_no2',
+        'earliest_filing_year_docdb2': 'earliest_filing_year_2',
     }, inplace=True)
-
-    # Display the final dataframe
-    merged_df2.head(50).to_csv("test.csv")
 
     # Save the final DataFrame as a Feather file
     # output_path = r'/home/pery@ip.local/f-newton/PATSTAT/2023-10/octimine_with_patent_no.ftr'
     # merged_df2.to_feather(output_path)
+
 
 if __name__ == '__main__':
     main()
