@@ -1,12 +1,13 @@
 import pandas as pd
 from tqdm import tqdm
+import toml
 
 
-def process_filtered_database(filtered_database_file):
+def process_filtered_database(filtered_database_file, output_csv, none_entries_log):
     # Load the filtered data
     df = pd.read_csv(filtered_database_file)
 
-    # Ensure the earliest_filing_year column is in datetime format
+    # Ensure the earliest_filing_date column is in datetime format
     df['earliest_filing_date'] = pd.to_datetime(df['earliest_filing_date'])
 
     # List to store docdb_family_id with None entries
@@ -47,23 +48,27 @@ def process_filtered_database(filtered_database_file):
 
     # Save the entries to a new CSV file
     header = ["docdb_family_id", "earliest_pat_publn_id", "earliest_filing_date", "appln_auth", "granted"]
-    df_earliest_filing_date.to_csv('patstat_pat_no.csv', index=False, columns=header)
+    df_earliest_filing_date.to_csv(output_csv, index=False, columns=header)
 
     # Print number of non-EP entries
     non_ep_entries_count = len(df_earliest_filing_date[df_earliest_filing_date['appln_auth'] != 'EP'])
     print(f"Non-EP entries: {non_ep_entries_count}")
 
     # Save the list of docdb_family_id with None entries to a log file
-    with open('none_entries_log.txt', 'w') as f:
+    with open(none_entries_log, 'w') as f:
         for entry in none_entries:
             f.write(f"{entry}\n")
 
-    print(f"Logged {len(none_entries)} None entries to 'none_entries_log.txt'")
+    print(f"Logged {len(none_entries)} None entries to '{none_entries_log}'")
 
 
 def main():
-    filtered_database_file = 'filtered_patstat_db.csv'
-    process_filtered_database(filtered_database_file)
+    # Load the paths from the config file
+    config = toml.load('config.toml')
+    paths = config['paths']
+
+    # Process the filtered database
+    process_filtered_database(paths['patstat_filtered'], paths['patent_no'], paths['none_entries_log'])
 
 
 if __name__ == '__main__':
