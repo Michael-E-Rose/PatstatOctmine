@@ -26,8 +26,6 @@ def main():
         if not header_written:
             header_written = True
 
-    print("Filtered data saved to 'filtered_test_file.csv'")
-
 
 if __name__ == '__main__':
     main()
